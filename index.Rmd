@@ -32,6 +32,7 @@ This website is automatically updated once a day, at 9AM PT.
 
 
 ```{r download_data, include=FALSE, echo=FALSE}
+location_nwvan <- 'http://www.vch.ca/Documents/VCH-beach-route3.pdf'
 location_kits <- 'http://www.vch.ca/Documents/VCH-beach-route2.pdf'
 location_jericho <- 'http://www.vch.ca/Documents/VCH-beach-route1.pdf'
 
@@ -62,7 +63,20 @@ tbl_jericho <- tbl_jericho %>%
   mutate(Ecoli=replace(Ecoli,Ecoli=="<10", 9.9)) %>%
   mutate(Ecoli=as.integer(Ecoli))
 
-tbl_all <- rbind(tbl_kits,tbl_jericho)
+out_nwvan <- extract_tables(location_nwvan)
+tbl_nwvan <- out_nwvan %>%
+  pluck(1) %>%
+  as_tibble() %>%
+  slice(-c(1,2))
+names(tbl_nwvan) = col_names
+
+tbl_nwvan <- tbl_nwvan %>%
+  mutate(Date=as.Date(Date, format = "%m/%d/%Y")) %>%
+  select(-Temperature,-Salinity) %>%
+  mutate(Ecoli=replace(Ecoli,Ecoli=="<10", 9.9)) %>%
+  mutate(Ecoli=as.integer(Ecoli))
+
+tbl_all <- rbind(tbl_kits,tbl_jericho,tbl_nwvan)
 tbl_recent <- aggregate(Date~., tbl_all, max)
 
 beach_latlong <- read_csv("beach_latlong.csv")
