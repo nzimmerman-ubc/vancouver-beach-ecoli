@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Naomi Zimmerman &amp; Michel Castagne" />
+
+
+<title>Vancouver E. Coli Map</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
+<script src="site_libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="site_libs/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Vancouver E. Coli Map</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">The Map</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Vancouver E. Coli Map</h1>
+<h4 class="author">Naomi Zimmerman &amp; Michel Castagne</h4>
+<h4 class="date">6/27/2021</h4>
+
+</div>
+
+
+<p>This website downloads and displays the most recent E. coli readings as reported by Vancouver Coastal Health. This was borne out of an interest in seeing the actual numbers, not just a “Pass” or “Fail” metric on a map.</p>
+<p>All numbers are <a href="http://www.vch.ca/public-health/environmental-health-inspections/pools-beaches/beach-water-quality-reports">taken from this website.</a>.</p>
+<p>According to Vancouver Coastal Health:</p>
+<blockquote>
+<p>Beach owners/operators are responsible for monitoring the beaches throughout the swimming season to determine compliance with the <a href="https://www.canada.ca/content/dam/canada/health-canada/migration/healthy-canadians/publications/healthy-living-vie-saine/water-recreational-recreative-eau/alt/pdf/water-recreational-recreative-eau-eng.pdf">Canadian Recreational Water Quality Guidelines, 2012</a>. The guidelines recommend beach water is monitored for the presence of E. coli using two limits; a geometric mean of ≤ 200 E. coli/100 mL based on the previous five samples and a single sample limit of ≤ 400 E. coli/100 mL. When either of these limits is exceeded an assessment will be made by the Medical Health Officer. Beach operators may be required to post a notice at the beach, “No Swimming”.</p>
+</blockquote>
+<p>This website is automatically updated once a day, at 9AM PT.</p>
+<p>Click any of the dots on the map to display the most recent reading.</p>
+<div id="htmlwidget-f415549d18098a9bba76" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f415549d18098a9bba76">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"setView":[[49.26809,-123.16862],13,[]],"calls":[{"method":"addProviderTiles","args":["Esri.WorldStreetMap",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[49.27632,49.275615,49.274816,49.273636,49.27867,49.278265,49.275034,49.274282,49.273836,49.272885,49.27292,49.282055,49.27961,49.278746,49.28831,49.286726,49.285592,49.275049,49.27276,49.270036,49.304462,49.303252,49.302181,49.278278,49.27811,49.277121,49.265447,49.263348,49.262179,49.259956,49.25592,49.255624,49.268386,49.271819],[-123.153383,-123.154045,-123.154753,-123.155651,-123.148523,-123.149027,-123.198364,-123.196832,-123.196506,-123.194473,-123.191415,-123.141937,-123.13956,-123.138559,-123.143751,-123.143846,-123.144071,-123.139048,-123.132331,-123.130383,-123.15687,-123.157095,-123.157334,-123.225706,-123.220852,-123.215476,-123.26481,-123.263064,-123.262701,-123.262951,-123.256187,-123.255776,-123.26345,-123.260416],50,null,null,{"interactive":true,"className":"","stroke":true,"color":"black","weight":1,"opacity":0.5,"fill":true,"fillColor":["#E0F3F8","#E0F3F8","#91BFDB","#91BFDB","#FEE090","#E0F3F8","#4575B4","#4575B4","#91BFDB","#91BFDB","#91BFDB","#FEE090","#91BFDB","#FEE090","#E0F3F8","#D73027","#FC8D59","#91BFDB","#91BFDB","#91BFDB","#4575B4","#4575B4","#91BFDB","#91BFDB","#91BFDB","#4575B4","#91BFDB","#91BFDB","#91BFDB","#91BFDB","#E0F3F8","#FEE090","#91BFDB","#91BFDB"],"fillOpacity":1},["<strong>Location: <\/strong>Vancouver, Kitsilano Beach, Station 501<\/br><strong>E. coli (MPN/100mL) : <\/strong>173<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Kitsilano Beach, Station 501A<\/br><strong>E. coli (MPN/100mL) : <\/strong>134<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Kitsilano Beach, Station 502<\/br><strong>E. coli (MPN/100mL) : <\/strong>74<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Kitsilano Beach, Station 503<\/br><strong>E. coli (MPN/100mL) : <\/strong>52<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Kitsilano Point, Station 512<\/br><strong>E. coli (MPN/100mL) : <\/strong>243<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Kitsilano Point, Station 511<\/br><strong>E. coli (MPN/100mL) : <\/strong>179<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Jericho Beach, Station 605<\/br><strong>E. coli (MPN/100mL) : <\/strong>9<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Jericho Beach, Station 604<\/br><strong>E. coli (MPN/100mL) : <\/strong>9<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Jericho Beach, Station 603<\/br><strong>E. coli (MPN/100mL) : <\/strong>41<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Jericho Beach, Station 602<\/br><strong>E. coli (MPN/100mL) : <\/strong>10<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Jericho Beach, Station 601<\/br><strong>E. coli (MPN/100mL) : <\/strong>75<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Sunset Beach, Station 401<\/br><strong>E. coli (MPN/100mL) : <\/strong>275<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Sunset Beach, Station 402<\/br><strong>E. coli (MPN/100mL) : <\/strong>75<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Sunset Beach, Station 403<\/br><strong>E. coli (MPN/100mL) : <\/strong>201<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, English Bay Beach, Station 303<\/br><strong>E. coli (MPN/100mL) : <\/strong>161<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, English Bay Beach, Station 304<\/br><strong>E. coli (MPN/100mL) : <\/strong>683<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, English Bay Beach, Station 305<\/br><strong>E. coli (MPN/100mL) : <\/strong>428<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, West False Creek, Station 16<\/br><strong>E. coli (MPN/100mL) : <\/strong>10<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, West False Creek, Station 23<\/br><strong>E. coli (MPN/100mL) : <\/strong>31<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, West False Creek, Station 18<\/br><strong>E. coli (MPN/100mL) : <\/strong>10<\/br><strong>Date: <\/strong>2021-06-22","<strong>Location: <\/strong>Vancouver, Third Beach, Station 100<\/br><strong>E. coli (MPN/100mL) : <\/strong>9<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Third Beach, Station 101<\/br><strong>E. coli (MPN/100mL) : <\/strong>9<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Third Beach, Station 102<\/br><strong>E. coli (MPN/100mL) : <\/strong>20<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Spanish Banks, Station 804<\/br><strong>E. coli (MPN/100mL) : <\/strong>74<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Spanish Banks, Station 812<\/br><strong>E. coli (MPN/100mL) : <\/strong>10<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Vancouver, Spanish Banks, Station 801<\/br><strong>E. coli (MPN/100mL) : <\/strong>9<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 6, Breakwater, Station 30<\/br><strong>E. coli (MPN/100mL) : <\/strong>52<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 6, Breakwater, Station 23<\/br><strong>E. coli (MPN/100mL) : <\/strong>41<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 6, Breakwater, Station 22<\/br><strong>E. coli (MPN/100mL) : <\/strong>20<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 6, Breakwater, Station 21<\/br><strong>E. coli (MPN/100mL) : <\/strong>52<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 7, Oasis, Station 19<\/br><strong>E. coli (MPN/100mL) : <\/strong>171<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 7, Oasis, Station 18<\/br><strong>E. coli (MPN/100mL) : <\/strong>231<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 4, Towers, Station 24<\/br><strong>E. coli (MPN/100mL) : <\/strong>41<\/br><strong>Date: <\/strong>2021-06-24","<strong>Location: <\/strong>Wreck Beach, Trail 4, Towers, Station 26<\/br><strong>E. coli (MPN/100mL) : <\/strong>52<\/br><strong>Date: <\/strong>2021-06-24"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]},{"method":"addLegend","args":[{"colors":["#4575B4","#91BFDB","#E0F3F8","#FEE090","#FC8D59","#D73027"],"labels":["<10","10-100","100-200","200-400","400-600",">600"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"factor","title":"<strong>E. Coli (MPN/100mL)<\/strong>","extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[49.255624,49.304462],"lng":[-123.26481,-123.130383]}},"evals":[],"jsHooks":[]}</script>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+---
+title: "Vancouver E. Coli Map"
+author: "Naomi Zimmerman & Michel Castagne"
+date: "6/27/2021"
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+    theme: simplex
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tabulizer)
+library(kableExtra)
+library(leaflet)
+library(RColorBrewer)
+library(purrr)
+```
+
+This website downloads and displays the most recent E. coli readings as reported by Vancouver Coastal Health. This was borne out of an interest in seeing the actual numbers, not just a "Pass" or "Fail" metric on a map. 
+
+All numbers are [taken from this website.](http://www.vch.ca/public-health/environmental-health-inspections/pools-beaches/beach-water-quality-reports).
+
+According to Vancouver Coastal Health:
+
+> Beach owners/operators are responsible for monitoring the beaches throughout the swimming season to determine compliance with the [Canadian Recreational Water Quality Guidelines, 2012](https://www.canada.ca/content/dam/canada/health-canada/migration/healthy-canadians/publications/healthy-living-vie-saine/water-recreational-recreative-eau/alt/pdf/water-recreational-recreative-eau-eng.pdf). The guidelines recommend beach water is monitored for the presence of E. coli using two limits; a geometric mean of ≤ 200 E. coli/100 mL based on the previous five samples and a single sample limit of ≤ 400 E. coli/100 mL. When either of these limits is exceeded an assessment will be made by the Medical Health Officer. Beach operators may be required to post a notice at the beach, “No Swimming”.
+
+This website is automatically updated once a day, at 9AM PT.
+
+
+```{r download_data, include=FALSE, echo=FALSE}
+location_kits <- 'http://www.vch.ca/Documents/VCH-beach-route2.pdf'
+location_jericho <- 'http://www.vch.ca/Documents/VCH-beach-route1.pdf'
+
+out_kits <- extract_tables(location_kits)
+tbl_kits <- out_kits %>%
+  pluck(1) %>%
+  as_tibble() %>%
+  slice(-c(1,2))
+col_names <- c("siteID","Description","Date","Ecoli","Salinity","Temperature")
+names(tbl_kits) = col_names
+
+tbl_kits <- tbl_kits %>%
+  mutate(Date=as.Date(Date, format = "%m/%d/%Y")) %>%
+  select(-Temperature,-Salinity) %>%
+  mutate(Ecoli=replace(Ecoli,Ecoli=="<10", 9.9)) %>%
+  mutate(Ecoli=as.integer(Ecoli))
+
+out_jericho <- extract_tables(location_jericho)
+tbl_jericho <- out_jericho %>%
+  pluck(1) %>%
+  as_tibble() %>%
+  slice(-c(1,2))
+names(tbl_jericho) = col_names
+
+tbl_jericho <- tbl_jericho %>%
+  mutate(Date=as.Date(Date, format = "%m/%d/%Y")) %>%
+  select(-Temperature,-Salinity) %>%
+  mutate(Ecoli=replace(Ecoli,Ecoli=="<10", 9.9)) %>%
+  mutate(Ecoli=as.integer(Ecoli))
+
+tbl_all <- rbind(tbl_kits,tbl_jericho)
+tbl_recent <- aggregate(Date~., tbl_all, max)
+
+beach_latlong <- read_csv("beach_latlong.csv")
+
+tbl_condensed <- inner_join(beach_latlong,tbl_recent,by="siteID")
+```
+
+Click any of the dots on the map to display the most recent reading.
+
+```{r mapping, echo=FALSE}
+
+tbl_condensed$severity = cut(tbl_condensed$Ecoli,
+                             breaks=c(0,10,100,200,400,600,2000), right=FALSE,
+                             labels=c("<10","10-100","100-200","200-400","400-600",">600"))
+
+palette_rev <- rev(brewer.pal(6, "RdYlBu"))
+pal <- colorFactor(
+  palette = palette_rev,
+  domain = tbl_condensed$severity
+)
+
+test_map <- leaflet() %>%
+  setView(lng=-123.168620, lat= 49.268090, zoom=13) %>%
+  addProviderTiles("Esri.WorldStreetMap")
+
+
+test_map %>%
+  addCircles(
+    data=tbl_condensed,
+    lng = ~Longitude,
+    lat = ~Latitude,
+    radius = 50,
+    color = 'black',
+    fillColor = ~pal(severity),
+    fillOpacity = 1,
+    weight=1,
+    popup = paste0("<strong>Location: </strong>", tbl_condensed$Description, "</br>",
+                   "<strong>E. coli (MPN/100mL) : </strong>", tbl_condensed$Ecoli, "</br>",
+                   "<strong>Date: </strong>", tbl_condensed$Date)
+  ) %>%
+  addLegend(
+    position = c("topright"),
+    pal=pal,
+    values=tbl_condensed$severity,
+    title="<strong>E. Coli (MPN/100mL)</strong>")
+
+```

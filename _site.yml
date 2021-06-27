@@ -1,0 +1,6 @@
+output_dir: "."
+navbar:
+    title: "Vancouver E. Coli Map"
+    left:
+      - text: "The Map"
+        href: index.html
