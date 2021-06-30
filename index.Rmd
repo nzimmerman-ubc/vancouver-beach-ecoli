@@ -1,7 +1,7 @@
 ---
 title: "Vancouver E. Coli Map"
 author: "Naomi Zimmerman & Michel Castagne"
-date: "6/27/2021"
+date: "`r Sys.Date()`"
 output: 
   html_document:
     toc: false
@@ -22,13 +22,15 @@ library(purrr)
 
 This website downloads and displays the most recent E. coli readings as reported by Vancouver Coastal Health. This was borne out of an interest in seeing the actual numbers, not just a "Pass" or "Fail" metric on a map. 
 
-All numbers are [taken from this website.](http://www.vch.ca/public-health/environmental-health-inspections/pools-beaches/beach-water-quality-reports).
+All numbers are [taken from this website.](http://www.vch.ca/public-health/environmental-health-inspections/pools-beaches/beach-water-quality-reports)
 
 According to Vancouver Coastal Health:
 
 > Beach owners/operators are responsible for monitoring the beaches throughout the swimming season to determine compliance with the [Canadian Recreational Water Quality Guidelines, 2012](https://www.canada.ca/content/dam/canada/health-canada/migration/healthy-canadians/publications/healthy-living-vie-saine/water-recreational-recreative-eau/alt/pdf/water-recreational-recreative-eau-eng.pdf). The guidelines recommend beach water is monitored for the presence of E. coli using two limits; a geometric mean of ≤ 200 E. coli/100 mL based on the previous five samples and a single sample limit of ≤ 400 E. coli/100 mL. When either of these limits is exceeded an assessment will be made by the Medical Health Officer. Beach operators may be required to post a notice at the beach, “No Swimming”.
 
 This website is automatically updated once a day, at 9AM PT.
+
+DISCLAIMER: This website was built solely to make accessing reported E. coli numbers easier. Always refer to the [Vancouver Coastal Health website](http://www.vch.ca/public-health/environmental-health-inspections/pools-beaches/beach-water-quality-reports) for official beach conditions and closures. 
 
 
 ```{r download_data, include=FALSE, echo=FALSE}
