@@ -2,7 +2,7 @@
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 16 * * *'
+    - cron:  '0 18 * * *'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -20,6 +20,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install rmarkdown
         run: Rscript -e 'install.packages("rmarkdown")'
+      - name: Install dependent packages
+        run: Rscript -e 'install.packages(c("dplyr","readr","ggplot2","tabulizer","leaflet","RColorBrewer","purrr"))'
       - name: Render my document to all types
         run: Rscript -e 'rmarkdown::render("index.Rmd", output_format = "html_document")'
       - name: Commit results
