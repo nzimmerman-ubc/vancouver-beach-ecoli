@@ -90,7 +90,7 @@ Click any of the dots on the map to display the most recent reading.
 ```{r mapping, echo=FALSE}
 
 tbl_condensed$severity = cut(tbl_condensed$Ecoli,
-                             breaks=c(0,10,100,200,400,600,2000), right=FALSE,
+                             breaks=c(0,10,100,200,400,600,10000), right=FALSE,
                              labels=c("<10","10-100","100-200","200-400","400-600",">600"))
 
 palette_rev <- rev(brewer.pal(6, "RdYlBu"))
