@@ -99,7 +99,7 @@ pal <- colorFactor(
   domain = tbl_condensed$severity
 )
 
-test_map <- leaflet() %>%
+test_map <- leaflet(width="100%") %>%
   setView(lng=-123.168620, lat= 49.268090, zoom=13) %>%
   addProviderTiles("Esri.WorldStreetMap")
 
