@@ -8,7 +8,7 @@ on:
 jobs:
   render:
     name: Render my document
-    runs-on: macOS-latest
+    runs-on: ubuntu-18.04
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -26,10 +26,17 @@ jobs:
         run: Rscript -e 'rmarkdown::render("index.Rmd", output_format = "html_document")'
       - name: Commit results
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add index.html
           git commit -m 'Re-build index.html' || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
 
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
+          
       - name: Report Status
         if: always()
         uses: ravsamhq/notify-slack-action@v1
