@@ -8,7 +8,7 @@ on:
 jobs:
   render:
     name: Render my document
-    runs-on: macos-latest
+    runs-on: macos-10.15
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
