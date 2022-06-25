@@ -8,7 +8,7 @@ on:
 jobs:
   render:
     name: Render my document
-    runs-on: macos-10.15
+    runs-on: macos-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -20,6 +20,10 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install rmarkdown
         run: Rscript -e 'install.packages("rmarkdown")'
+      - name: Install rJava
+        run: Rscript -e 'install.packages("rJava")'
+      - name: Install tabulizer
+        run: Rscript -e 'remotes::install_github(c('ropensci/tabulizerjars', 'ropensci/tabulizer'), INSTALL_opts = '--no-multiarch', dependencies = c('Depends', 'Imports'))'
       - name: Install dependent packages
         run: Rscript -e 'install.packages(c("dplyr","readr","ggplot2","tabulizer","leaflet","RColorBrewer","purrr"))'
       - name: Render my document to all types
