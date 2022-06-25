@@ -19,6 +19,10 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v1
 
       # Runs a single command using the runners shell
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+        shell: Rscript {0}
       - name: Install rmarkdown
         run: Rscript -e 'install.packages("rmarkdown")'
       - name: Install rJava
