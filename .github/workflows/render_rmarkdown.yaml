@@ -34,6 +34,10 @@ jobs:
       - name: Install rmarkdown
         run: Rscript -e 'install.packages("rmarkdown")'
         
+      - name: Install Depends
+        run: install.packages(c("shiny", "shinyBS"))
+        shell: Rscript {0}
+        
       - name: Install libraries
         run: |
           install.packages('tidyverse')
