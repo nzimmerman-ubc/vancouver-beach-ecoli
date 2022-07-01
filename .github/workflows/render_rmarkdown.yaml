@@ -1,5 +1,6 @@
 # Controls when the workflow will run
 on:
+  workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron:  '0 16 * * *'
@@ -18,8 +19,16 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v1
 
       # Runs a single command using the runners shell
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+        shell: Rscript {0}
       - name: Install rmarkdown
         run: Rscript -e 'install.packages("rmarkdown")'
+      - name: Install rJava
+        run: Rscript -e 'install.packages("rJava")'
+      - name: Install tabulizer
+        run: Rscript -e 'remotes::install_github(c('ropensci/tabulizerjars', 'ropensci/tabulizer'), INSTALL_opts = '--no-multiarch', dependencies = c('Depends', 'Imports'))'
       - name: Install dependent packages
         run: Rscript -e 'install.packages(c("dplyr","readr","ggplot2","tabulizer","leaflet","RColorBrewer","purrr"))'
       - name: Render my document to all types
