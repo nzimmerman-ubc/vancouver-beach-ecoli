@@ -10,6 +10,8 @@ jobs:
   render:
     name: Render my document
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
